@@ -1,6 +1,6 @@
 /*jslint node: true */
 /*
- * grunt-phonegap-unplugged
+ * grunt-phonegap-offline
  *
  *
  * Copyright (c) 2015 Lonny Gomes
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
         },
 
         // Configuration to be run (and then tested).
-        phonegap_unplugged: {},
+        phonegap_offline: {},
 
         // Unit tests.
         nodeunit: {
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ['clean', 'phonegap_unplugged', 'nodeunit']);
+    grunt.registerTask('test', ['clean', 'phonegap_offline', 'nodeunit']);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'test']);

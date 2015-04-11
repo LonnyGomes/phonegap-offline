@@ -1,5 +1,5 @@
 {
-  "name": "grunt-phonegap-unplugged",
+  "name": "grunt-phonegap-offline",
   "version": "0.0.1",
   "description": "Grunt plugin to leverage phonegap using custom configurations",
   "repository": "",

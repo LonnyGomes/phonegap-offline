@@ -23,7 +23,7 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
-exports.phonegap_unplugged = {
+exports.phonegap_offline = {
     setUp: function (done) {
         // setup here if necessary
         done();
