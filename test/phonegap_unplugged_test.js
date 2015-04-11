@@ -1,3 +1,4 @@
+/*jslint node: true */
 'use strict';
 
 var grunt = require('grunt');
@@ -23,14 +24,14 @@ var grunt = require('grunt');
 */
 
 exports.phonegap_unplugged = {
-  setUp: function (done) {
-    // setup here if necessary
-    done();
-  },
-  default_options: function (test) {
-    test.done();
-  },
-  custom_options: function (test) {
-    test.done();
-  }
+    setUp: function (done) {
+        // setup here if necessary
+        done();
+    },
+    default_options: function (test) {
+        test.done();
+    },
+    custom_options: function (test) {
+        test.done();
+    }
 };
