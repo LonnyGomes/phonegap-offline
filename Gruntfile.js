@@ -1,6 +1,6 @@
 /*
  * grunt-phonegap-unplugged
- * 
+ *
  *
  * Copyright (c) 2015 Lonny Gomes
  * Licensed under the MIT license.
@@ -32,24 +32,7 @@ module.exports = function (grunt) {
     },
 
     // Configuration to be run (and then tested).
-    phonegap_unplugged: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      }
-    },
+    phonegap_unplugged: {},
 
     // Unit tests.
     nodeunit: {
