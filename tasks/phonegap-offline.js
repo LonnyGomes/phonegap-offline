@@ -12,6 +12,7 @@
 
 module.exports = function (grunt) {
     var _ = require('lodash'),
+        path = require('path'),
         settingsKey = 'phonegap_offline.settings',
         settingsDefaults = {
             command: 'phonegap',
@@ -29,10 +30,41 @@ module.exports = function (grunt) {
         supportedPlatforms = [ 'ios' ],
         requiredTemplates = [ 'www' ];
 
+    function phonegapCreate(s) {
+        var appPath = path.resolve(s.basePath),
+            //generate phonegap config based off of provided settings
+            platformsObj = s.platforms.reduce(function (prev, cur) {
+                prev.lib[cur] = {
+                    url: s.templates[cur]
+                };
+
+                return prev;
+            }, {
+                lib: {
+                    www: {
+                        url: s.templates.www
+                    }
+                }
+            });
+
+        console.dir(platformsObj);
+
+
+        if (grunt.file.exists(s.basePath)) {
+            grunt.log.writeln('The phonegap path already exists, skipping create process');
+            return;
+        }
+    }
+
     grunt.task.registerTask('phonegap_offline', 'Phonegap wraper for custom configruations', function (action, platform) {
         var settings,
             platformCheck,
-            templatesCheck;
+            templatesCheck,
+            actions = {
+                create: function (s) {
+                    return phonegapCreate(s);
+                }
+            };
 
         //settings must be defined before we continue
         grunt.config.requires(settingsKey);
@@ -76,6 +108,18 @@ module.exports = function (grunt) {
             }
         });
 
+        //if no parameters were supplied perform following actions:
+        //    create, add_platform and prepare
+        if (!action) {
+            phonegapCreate(settings);
+        } else {
+            //arguments were supplied, check if they are valid
+            if (actions[action]) {
+                actions[action](settings, platform);
+            } else {
+                grunt.fail.fatal('Invalid action: "' + action + '"');
+            }
+        }
 
 
     });
