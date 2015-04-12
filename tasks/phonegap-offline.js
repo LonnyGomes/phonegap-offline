@@ -45,11 +45,11 @@ module.exports = function (grunt) {
         });
 
         cmd.stderr.on('data', function (data) {
-            grunt.log.writeln(data);
+            grunt.log.write(data);
         });
 
         cmd.stdout.on('data', function (data) {
-            grunt.log.writeln(data);
+            grunt.log.write(data);
         });
 
         return defer.promise;
@@ -61,14 +61,14 @@ module.exports = function (grunt) {
             //generate phonegap config based off of provided settings
             platformsObj = s.platforms.reduce(function (prev, cur) {
                 prev.lib[cur] = {
-                    url: s.templates[cur]
+                    url: path.resolve(s.templates[cur])
                 };
 
                 return prev;
             }, {
                 lib: {
                     www: {
-                        url: s.templates.www
+                        url: path.resolve(s.templates.www)
                     }
                 }
             }),
@@ -98,6 +98,54 @@ module.exports = function (grunt) {
         return defer.promise;
     }
 
+    function phonegapAdd(s, platform) {
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
+            cmdOptions = {
+                cmd: s.command,
+                opts: {
+                    cwd: appPath
+                },
+                args: [
+                    'platform',
+                    'add',
+                    platform
+                ]
+            },
+            platformPath;
+
+        //check if platform parameter was supplied
+        if (!platform) {
+            grunt.fail.fatal('The platform argument was not supplied!');
+        }
+
+        //make sure app path exists
+        if (!grunt.file.exists(appPath)) {
+            grunt.fail.fatal('Phonegap project does not exist, run create!');
+        }
+
+        //confirm that the supplied platform exists
+        if (!s.templates[platform]) {
+            grunt.fail.fatal('No corresponding template exists for ' + platform);
+        }
+
+        //before we add the platform, lets see if it already extists
+        platformPath = path.resolve(s.basePath, 'platforms', platform);
+        if (grunt.file.exists(platformPath)) {
+            grunt.log.writeln('Platform for ' + platform + ' already exists, not adding.');
+            defer.resolve();
+            return defer.promise;
+        }
+
+        spawnCmd(cmdOptions).then(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
+        });
+
+        return defer.promise;
+    }
+
     grunt.task.registerTask('phonegap_offline', description, function (action, platform) {
         var done,
             settings,
@@ -106,6 +154,9 @@ module.exports = function (grunt) {
             actions = {
                 create: function (s) {
                     return phonegapCreate(s);
+                },
+                add: function (s, platform) {
+                    return phonegapAdd(s, platform);
                 }
             };
 
@@ -159,30 +210,21 @@ module.exports = function (grunt) {
             }
         });
 
-        //if no parameters were supplied perform following actions:
-        //    create, add_platform and prepare
-        if (!action) {
+        //if no parameters were supplied set default action to create
+        action = action || 'create';
+
+        //check if action argument is valid
+        if (actions[action]) {
             done = this.async();
-            phonegapCreate(settings).then(function () {
+
+            actions[action](settings, platform).then(function () {
                 done();
             }, function (err) {
                 grunt.fail.fatal(err);
                 done(false);
             });
         } else {
-            //arguments were supplied, check if they are valid
-            if (actions[action]) {
-                done = this.async();
-
-                actions[action](settings, platform).then(function () {
-                    done();
-                }, function (err) {
-                    grunt.fail.fatal(err);
-                    done(false);
-                });
-            } else {
-                grunt.fail.fatal('Invalid action: "' + action + '"');
-            }
+            grunt.fail.fatal('Invalid action: "' + action + '"');
         }
 
     });
