@@ -26,5 +26,8 @@
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "dependencies": {
+    "lodash": "^3.6.0"
   }
 }

@@ -14,6 +14,7 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
         jshint: {
             all: [
                 'Gruntfile.js',
@@ -28,11 +29,24 @@ module.exports = function (grunt) {
 
         // Before generating any new files, remove any previously-created files.
         clean: {
-            tests: ['tmp']
+            tests: ['tmp'],
+            phonegap: ['phonegap']
         },
 
         // Configuration to be run (and then tested).
-        phonegap_offline: {},
+        phonegap_offline: {
+            settings: {
+                command: 'phonegap',
+                basePath: 'phonegap',
+                appId: 'com.fakecompany.<%= pkg.name %>',
+                appName: '<%= pkg.name %>',
+                platforms: [ 'ios' ],
+                templates: {
+                    www: 'test/fixtures/www',
+                    ios: 'test/fixtures/ios'
+                }
+            }
+        },
 
         // Unit tests.
         nodeunit: {

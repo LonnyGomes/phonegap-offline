@@ -28,8 +28,16 @@ exports.phonegap_offline = {
         // setup here if necessary
         done();
     },
-    default_options: function (test) {
+    settings: function (test) {
+        var actualBasePath =
+            grunt.config.get('phonegap_offline.settings.basePath');
+        var expectedBasePath = "phonegap";
+
+        test.expect(1);
+        test.ok(true, "this assertion should pass");
         test.done();
+        test.equal(actualBasePath, expectedBasePath);
+
     },
     custom_options: function (test) {
         test.done();
