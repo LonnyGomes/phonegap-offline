@@ -13,6 +13,7 @@
 module.exports = function (grunt) {
     var _ = require('lodash'),
         path = require('path'),
+        q = require('q'),
         settingsKey = 'phonegap_offline.settings',
         settingsDefaults = {
             command: 'phonegap',
@@ -32,7 +33,8 @@ module.exports = function (grunt) {
         description = 'Phonegap wraper for offline configruations';
 
     function phonegapCreate(s) {
-        var appPath = path.resolve(s.basePath),
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
             //generate phonegap config based off of provided settings
             platformsObj = s.platforms.reduce(function (prev, cur) {
                 prev.lib[cur] = {
@@ -50,12 +52,16 @@ module.exports = function (grunt) {
 
         if (grunt.file.exists(s.basePath)) {
             grunt.log.writeln('The phonegap path already exists, skipping create process');
-            return;
+            defer.resolve();
+            return defer.promise;
         }
+
+        return defer.promise;
     }
 
     grunt.task.registerTask('phonegap_offline', description, function (action, platform) {
-        var settings,
+        var done,
+            settings,
             platformCheck,
             templatesCheck,
             actions = {
@@ -117,11 +123,24 @@ module.exports = function (grunt) {
         //if no parameters were supplied perform following actions:
         //    create, add_platform and prepare
         if (!action) {
-            phonegapCreate(settings);
+            done = this.async();
+            phonegapCreate(settings).then(function () {
+                done();
+            }, function (err) {
+                grunt.fail.fatal(err);
+                done(false);
+            });
         } else {
             //arguments were supplied, check if they are valid
             if (actions[action]) {
-                actions[action](settings, platform);
+                done = this.async();
+
+                actions[action](settings, platform).then(function () {
+                    done();
+                }, function (err) {
+                    grunt.fail.fatal(err);
+                    done(false);
+                });
             } else {
                 grunt.fail.fatal('Invalid action: "' + action + '"');
             }
