@@ -32,6 +32,29 @@ module.exports = function (grunt) {
         requiredTemplates = [ 'www' ],
         description = 'Phonegap wraper for offline configruations';
 
+    function spawnCmd(cmdOptions) {
+        var defer = q.defer(),
+            cmd;
+
+        cmd = grunt.util.spawn(cmdOptions, function (error, result, code) {
+            if (error) {
+                defer.reject(error.message);
+            } else {
+                defer.resolve();
+            }
+        });
+
+        cmd.stderr.on('data', function (data) {
+            grunt.log.writeln(data);
+        });
+
+        cmd.stdout.on('data', function (data) {
+            grunt.log.writeln(data);
+        });
+
+        return defer.promise;
+    }
+
     function phonegapCreate(s) {
         var defer = q.defer(),
             appPath = path.resolve(s.basePath),
@@ -58,8 +81,7 @@ module.exports = function (grunt) {
                     s.appName,
                     JSON.stringify(platformsObj)
                 ]
-            },
-            spawnCmd;
+            };
 
         if (grunt.file.exists(s.basePath)) {
             grunt.log.writeln('The phonegap path already exists, skipping create process');
@@ -67,21 +89,10 @@ module.exports = function (grunt) {
             return defer.promise;
         }
 
-        spawnCmd = grunt.util.spawn(cmdOptions, function (error, result, code) {
-            if (error) {
-                defer.reject(error.message);
-            } else {
-                defer.resolve();
-            }
-        });
-
-        spawnCmd.stderr.on('data', function (data) {
-
-            grunt.log.writeln(data);
-        });
-
-        spawnCmd.stdout.on('data', function (data) {
-            grunt.log.writeln(data);
+        spawnCmd(cmdOptions).then(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
         });
 
         return defer.promise;
@@ -173,7 +184,6 @@ module.exports = function (grunt) {
                 grunt.fail.fatal('Invalid action: "' + action + '"');
             }
         }
-
 
     });
 
