@@ -1,0 +1,13 @@
+{
+    "id": "com.lonnygomes.appid",
+    "name": "Appname",
+    "lib": {
+        "ios": {
+            "url": "/Users/carpelucem/code/nodejs/cordova-cli/templates/ios/package2.tgz",
+            "version":"3.8.0"
+        },
+        "www": {
+            "url":"/Users/carpelucem/code/nodejs/cordova-cli/templates/www"
+        }
+    }
+}
