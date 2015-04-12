@@ -38,8 +38,8 @@ module.exports = function (grunt) {
             settings: {
                 command: 'phonegap',
                 basePath: 'phonegap',
-                appId: 'com.fakecompany.<%= pkg.name %>',
-                appName: '<%= pkg.name %>',
+                appId: 'com.fakecompany.appid',
+                appName: 'FakeApp',
                 platforms: [ 'ios' ],
                 templates: {
                     www: 'test/fixtures/www',

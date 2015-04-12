@@ -48,13 +48,41 @@ module.exports = function (grunt) {
                         url: s.templates.www
                     }
                 }
-            });
+            }),
+            cmdOptions = {
+                cmd: s.command,
+                args: [
+                    'create',
+                    appPath,
+                    s.appId,
+                    s.appName,
+                    JSON.stringify(platformsObj)
+                ]
+            },
+            spawnCmd;
 
         if (grunt.file.exists(s.basePath)) {
             grunt.log.writeln('The phonegap path already exists, skipping create process');
             defer.resolve();
             return defer.promise;
         }
+
+        spawnCmd = grunt.util.spawn(cmdOptions, function (error, result, code) {
+            if (error) {
+                defer.reject(error.message);
+            } else {
+                defer.resolve();
+            }
+        });
+
+        spawnCmd.stderr.on('data', function (data) {
+
+            grunt.log.writeln(data);
+        });
+
+        spawnCmd.stdout.on('data', function (data) {
+            grunt.log.writeln(data);
+        });
 
         return defer.promise;
     }
