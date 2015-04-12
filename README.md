@@ -1,6 +1,6 @@
 # grunt-phonegap-offline
 
-> Grunt plugin to leverage phonegap using custom configurations
+> Grunt plugin to leverage phonegap in offline environments
 
 ## Getting Started
 This plugin requires Grunt.
@@ -25,61 +25,143 @@ In your project's Gruntfile, add a section named `phonegap_offline` to the data 
 ```js
 grunt.initConfig({
   phonegap_offline: {
-    options: {
-      // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+        settings: {
+            command: 'phonegap',
+            basePath: 'phonegap',
+            appId: 'com.fakecompany.appid',
+            appName: 'FakeApp',
+            platforms: [ 'ios' ],
+            templates: {
+                www: 'test/fixtures/www',
+                ios: 'test/fixtures/ios'
+            }
+        }
+  }
 })
 ```
 
-### Options
+### Settings
 
-#### options.separator
+#### settings.command
 Type: `String`
-Default value: `',  '`
+Default value: `'phonegap'`
+Required: `no`
 
-A string value that is used to do something with whatever.
+The command name use to execute the phonegap CLI.
 
-#### options.punctuation
+#### settings.basePath
 Type: `String`
 Default value: `'.'`
+Required: `no`
 
-A string value that is used to do something else with whatever else.
+The path relative to `Gruntfile.js` where the phonegap application gets installed
 
-### Usage Examples
+#### settings.appId
+Type: `String`
+Default value: `'com.test.testapp'`
+Required: `no`
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+The unique id assigned to the app. It should only contain any special characters outside `.` and `_`. This value is not readily visible to the user and is typically represented in reverse URL format.
+
+#### settings.appName
+Type: `String`
+Default value: `'TestApp'`
+Required: `no`
+
+The name of the app without any special characters (including spaces). The `appName` is what appears to the user along with the app icon. It is possible to add spaces in the `appName` after the platform is created.
+
+#### settings.platforms
+Type: `Array`
+Default value: `N/A`
+Supported values: `ios`
+Required: `yes`
+
+A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
+
+#### settings.templates
+Type: `Object`
+Default value: `N/A`
+Supported object values: `www | ios`
+Required: `yes`
+
+The `templates` property maps platform templates to their file locations rather then pulling down the templates from the internet. It is constructed as an object of `template_name`/`template_path` key/value pairs. The `www` is required as well as any other platform defined in `settings.platforms` array.
+
+For instance, if the platforms array included `ios` and the template path for `ios` was '/usr/local/templates/ios', there must be a corresponding `ios` key/value pair in the `settings.template` object.
 
 ```js
-grunt.initConfig({
-  phonegap_offline: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
+{
+    settings: {
+        ...
+        platforms: [ 'ios' ],
+        templates: {
+            ios: '/usr/local/templates/ios'
+        }
+        ...
+    }
+}
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+The default template for `www` is located in `test/fixtures/www` for this repository and was derived from  
+A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
+
+### Usage Example
+
+The following configuration would initialize a phongap app targeted for `ios` within the `app` with an app id of `com.fakecompany.appid`, an app name of `appName` and would pull it's www template from `test/fixtures/www` and it's `ios` template from `test/fixtures/ios`.
 
 ```js
 grunt.initConfig({
-  phonegap_offline: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
+    pkg: grunt.file.readJSON('package.json'),
+    // Configuration to be run (and then tested).
+    phonegap_offline: {
+        settings: {
+            command: 'phonegap',
+            basePath: 'app',
+            appId: 'com.fakecompany.appid',
+            appName: 'FakeApp',
+            platforms: [ 'ios' ],
+            templates: {
+                www: 'test/fixtures/www',
+                ios: 'test/fixtures/ios'
+            }
+        }
+    }
+});
+```
+
+### Tasks
+
+The `phonegap_offline` grunt extention consists of several sub tasks. The name of the subtask is separted by a ':' as seen below.
+
+#### create
+
+The default sub task for phonegap_offline is create. It creates a phonegap application based off of the configuration supplied in the `Gruntfile.js`. If the phonegap `basePath` already exists, the create process is skipped. Access the create subtask by appending it to the `phonegap_offline` task separated by a `':'`.
+
+```
+grunt phonegap_offline:create
+```
+
+#### add
+
+The `add` task adds a platform for phonegap application. The `create` task must have been run beforehand. To add the `ios` platform to your project, you would run the following command.
+
+```
+grunt phonegap_offline:add:ios
+```
+
+#### prepare
+
+The `prepare` task runs `phonegap prepare <platform>`. If the platform argument is omitted, all installed platforms will be updated.
+
+Running `prepare` for the `ios` platform:
+
+```
+grunt phonegap_offline:prepare:ios
+```
+
+Running `prepare` without targetting a platform:
+
+```
+grunt phonegap_offline:prepare
 ```
 
 ## Contributing
