@@ -28,7 +28,8 @@ module.exports = function (grunt) {
             }
         },
         supportedPlatforms = [ 'ios' ],
-        requiredTemplates = [ 'www' ];
+        requiredTemplates = [ 'www' ],
+        description = 'Phonegap wraper for offline configruations';
 
     function phonegapCreate(s) {
         var appPath = path.resolve(s.basePath),
@@ -47,16 +48,13 @@ module.exports = function (grunt) {
                 }
             });
 
-        console.dir(platformsObj);
-
-
         if (grunt.file.exists(s.basePath)) {
             grunt.log.writeln('The phonegap path already exists, skipping create process');
             return;
         }
     }
 
-    grunt.task.registerTask('phonegap_offline', 'Phonegap wraper for custom configruations', function (action, platform) {
+    grunt.task.registerTask('phonegap_offline', description, function (action, platform) {
         var settings,
             platformCheck,
             templatesCheck,
@@ -93,10 +91,18 @@ module.exports = function (grunt) {
 
         //check for required templates
         requiredTemplates.forEach(function (curTemplate) {
+            var templatePath;
+
             if (!settings.templates[curTemplate]) {
                 grunt.fail.fatal('The required template "' +
                                 curTemplate +
                                 '" was not defined!');
+            }
+
+            templatePath = path.resolve(settings.templates[curTemplate]);
+            if (!grunt.file.exists(templatePath)) {
+                grunt.fail.fatal('Invalid template path for ' + curTemplate +
+                                 ': ' + templatePath);
             }
         });
 
