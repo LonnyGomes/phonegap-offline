@@ -26,12 +26,13 @@ module.exports = function (grunt) {
                 ios: 'test/fixtures/ios_invalid'
             }
         },
-        supportedPlatforms = [ 'ios' ];
+        supportedPlatforms = [ 'ios' ],
+        requiredTemplates = [ 'www' ];
 
     grunt.task.registerTask('phonegap_offline', 'Phonegap wraper for custom configruations', function (action, platform) {
         var settings,
-            platforms,
-            platformCheck;
+            platformCheck,
+            templatesCheck;
 
         //settings must be defined before we continue
         grunt.config.requires(settingsKey);
@@ -50,14 +51,30 @@ module.exports = function (grunt) {
         });
 
         //check for valid supported platforms
-        platforms = grunt.config.get(settingsKey + ".platforms");
-        platformCheck = _.difference(platforms, supportedPlatforms);
+        platformCheck = _.difference(settings.platforms, supportedPlatforms);
 
         if (platformCheck.length > 0) {
-            grunt.fail.warn('The ' +
+            grunt.fail.fatal('The ' +
                             platformCheck[0] +
                             ' platform is not supported!');
         }
+
+        //check for required templates
+        requiredTemplates.forEach(function (curTemplate) {
+            if (!settings.templates[curTemplate]) {
+                grunt.fail.fatal('The required template "' +
+                                curTemplate +
+                                '" was not defined!');
+            }
+        });
+
+        //check to make sure defined platforms have a corresponding template
+        settings.platforms.forEach(function (curPlatform) {
+            if (!settings.templates[curPlatform]) {
+                grunt.fail.fatal('A template must be defined for the ' +
+                                curPlatform + ' platform');
+            }
+        });
 
 
 
