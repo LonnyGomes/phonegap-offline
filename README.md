@@ -44,36 +44,48 @@ grunt.initConfig({
 
 #### settings.command
 Type: `String`
+
 Default value: `'phonegap'`
+
 Required: `no`
 
 The command name use to execute the phonegap CLI.
 
 #### settings.basePath
 Type: `String`
+
 Default value: `'.'`
+
 Required: `no`
 
 The path relative to `Gruntfile.js` where the phonegap application gets installed
 
 #### settings.appId
 Type: `String`
+
 Default value: `'com.test.testapp'`
+
 Required: `no`
 
 The unique id assigned to the app. It should only contain any special characters outside `.` and `_`. This value is not readily visible to the user and is typically represented in reverse URL format.
 
 #### settings.appName
 Type: `String`
+
 Default value: `'TestApp'`
+
 Required: `no`
 
 The name of the app without any special characters (including spaces). The `appName` is what appears to the user along with the app icon. It is possible to add spaces in the `appName` after the platform is created.
 
 #### settings.platforms
+
 Type: `Array`
+
 Default value: `N/A`
+
 Supported values: `ios`
+
 Required: `yes`
 
 A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
@@ -84,7 +96,7 @@ Default value: `N/A`
 Supported object values: `www | ios`
 Required: `yes`
 
-The `templates` property maps platform templates to their file locations rather then pulling down the templates from the internet. It is constructed as an object of `template_name`/`template_path` key/value pairs. The `www` is required as well as any other platform defined in `settings.platforms` array.
+The `templates` property maps platform templates to their file locations rather then pulling down the templates from the internet. It is constructed as an object of template_name/template_path key value pairs. The `www` template is required as well as any other platform defined in `settings.platforms` array.
 
 For instance, if the platforms array included `ios` and the template path for `ios` was '/usr/local/templates/ios', there must be a corresponding `ios` key/value pair in the `settings.template` object.
 
@@ -96,12 +108,12 @@ For instance, if the platforms array included `ios` and the template path for `i
         templates: {
             ios: '/usr/local/templates/ios'
         }
-        ...
     }
 }
 ```
 
-The default template for `www` is located in `test/fixtures/www` for this repository and was derived from  
+The default template for `www` is located in `test/fixtures/www` for this repository and was derived from [here](https://github.com/apache/cordova-app-hello-world). The `ios` template is located in `test/fixtures/ios` which was cloned from it's [GitHub mirror](https://github.com/apache/cordova-ios).
+
 A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
 
 ### Usage Example
