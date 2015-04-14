@@ -14,6 +14,7 @@ module.exports = function (grunt) {
     var _ = require('lodash'),
         path = require('path'),
         q = require('q'),
+        plist = require('plist'),
         settingsKey = 'phonegap_offline.settings',
         settingsDefaults = {
             command: 'phonegap',
@@ -31,6 +32,13 @@ module.exports = function (grunt) {
         supportedPlatforms = [ 'ios' ],
         requiredTemplates = [ 'www' ],
         description = 'Phonegap wraper for offline configruations';
+
+    function updatePlist(settings) {
+        var defer = q.defer();
+
+        defer.resolve();
+        return q.promise;
+    }
 
     function spawnCmd(cmdOptions) {
         var defer = q.defer(),
@@ -90,7 +98,10 @@ module.exports = function (grunt) {
         }
 
         spawnCmd(cmdOptions).then(function () {
-            defer.resolve();
+            //update the created plist file
+            updatePlist(s).then(function () {
+                defer.resolve();
+            });
         }, function (err) {
             defer.reject(err);
         });
