@@ -33,8 +33,44 @@ module.exports = function (grunt) {
         requiredTemplates = [ 'www' ],
         description = 'Phonegap wraper for offline configruations';
 
+    function updatePlistURLTypes(appId, urlScheme, pl) {
+        //check for URL Types array
+        if (!pl.CFBundleURLTypes) {
+            pl.CFBundleURLTypes = [];
+        }
+
+        //now insert into plist object
+        pl.CFBundleURLTypes[0] = {
+            CFBundleURLName: appId,
+            CFBundleURLSchemes: [ urlScheme ]
+        };
+
+        return pl;
+    }
+
     function updatePlist(settings) {
-        var defer = q.defer();
+        var defer = q.defer(),
+            plistPath = path.resolve(
+                settings.basePath,
+                'platforms',
+                'ios',
+                settings.appName,
+                settings.appName + '-Info.plist'
+            ),
+            plistObj;
+
+        if (!grunt.file.exists(plistPath)) {
+            grunt.log.error(['Failed to find plist file for phonegap project.'],
+                            ['Skipping plist update.'].join(' '));
+            defer.resolve();
+            return;
+        }
+
+        plistObj = plist.parse(grunt.file.read(plistPath, {encoding: 'utf8'}));
+
+        if (settings.appUrlScheme) {
+            updatePlistURLTypes(settings.appId, settings.appUrlScheme, plistObj);
+        }
 
         defer.resolve();
         return q.promise;
@@ -98,10 +134,7 @@ module.exports = function (grunt) {
         }
 
         spawnCmd(cmdOptions).then(function () {
-            //update the created plist file
-            updatePlist(s).then(function () {
-                defer.resolve();
-            });
+            defer.resolve();
         }, function (err) {
             defer.reject(err);
         });
@@ -149,7 +182,10 @@ module.exports = function (grunt) {
         }
 
         spawnCmd(cmdOptions).then(function () {
-            defer.resolve();
+            //update the created plist file
+            updatePlist(s).then(function () {
+                defer.resolve();
+            });
         }, function (err) {
             defer.reject(err);
         });
