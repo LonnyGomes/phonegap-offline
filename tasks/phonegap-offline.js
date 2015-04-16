@@ -45,6 +45,8 @@ module.exports = function (grunt) {
             CFBundleURLSchemes: [ urlScheme ]
         };
 
+        console.dir(pl.CFBundleURLTypes);
+
         return pl;
     }
 

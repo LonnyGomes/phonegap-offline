@@ -40,6 +40,7 @@ module.exports = function (grunt) {
                 basePath: 'phonegap',
                 appId: 'com.fakecompany.appid',
                 appName: 'FakeApp',
+                appUrlScheme: 'testScheme',
                 platforms: [ 'ios' ],
                 templates: {
                     www: 'test/fixtures/www',
