@@ -45,8 +45,6 @@ module.exports = function (grunt) {
             CFBundleURLSchemes: [ urlScheme ]
         };
 
-        console.dir(pl.CFBundleURLTypes);
-
         return pl;
     }
 
@@ -70,8 +68,12 @@ module.exports = function (grunt) {
 
         plistObj = plist.parse(grunt.file.read(plistPath, {encoding: 'utf8'}));
 
+        //if the appUrlScheme is defined, update the plist file to include changes
         if (settings.appUrlScheme) {
-            updatePlistURLTypes(settings.appId, settings.appUrlScheme, plistObj);
+            plistObj =
+                updatePlistURLTypes(settings.appId, settings.appUrlScheme, plistObj);
+
+            grunt.file.write(plistPath, plist.build(plistObj), {encoding: 'utf8'});
         }
 
         defer.resolve();
