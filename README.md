@@ -78,6 +78,15 @@ Required: `no`
 
 The name of the app without any special characters (including spaces). The `appName` is what appears to the user along with the app icon. It is possible to add spaces in the `appName` after the platform is created.
 
+#### settings.appUrlScheme
+Type: `String`
+
+Default value: `'N/A'`
+
+Required: `no`
+
+The URL scheme the app should register. A URL scheme allows your app to be invoked externally by an HTML href or a call from another app. This option is optional but if the value is set, `grunt-phonegap-offline` will update the iOS project's plist file for URL types with `appUrlScheme` being the url that could be invoked extenrally the `appId` acting as the URL name identifier.
+
 #### settings.platforms
 
 Type: `Array`
@@ -130,6 +139,7 @@ grunt.initConfig({
             basePath: 'app',
             appId: 'com.fakecompany.appid',
             appName: 'FakeApp',
+            appUrlScheme: 'fakeurlscheme',
             platforms: [ 'ios' ],
             templates: {
                 www: 'test/fixtures/www',
