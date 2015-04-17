@@ -33,6 +33,79 @@ module.exports = function (grunt) {
         requiredTemplates = [ 'www' ],
         description = 'Phonegap wraper for offline configruations';
 
+    function updateIcons(settings, platform) {
+        var defer = q.defer(),
+            iconMap =  {
+                ios: {
+                    icon29: 'icon-small.png',
+                    icon29x2: 'icon-small@2x.png',
+                    icon40: 'icon-40.png',
+                    icon40x2: 'icon-40@2x.png',
+                    icon57: 'icon.png',
+                    icon57x2: 'icon@2x.png',
+                    icon60: 'icon-60.png',
+                    icon60x2: 'icon-60@2x.png',
+                    icon72: 'icon-72.png',
+                    icon72x2: 'icon-72@2x.png',
+                    icon76: 'icon-76.png',
+                    icon76x2: 'icon-76@2x.png'
+                }
+            },
+            destPath = {
+                ios: path.resolve(
+                    settings.basePath,
+                    'platforms',
+                    'ios',
+                    settings.appName,
+                    'Resources',
+                    'icons'
+                )
+            },
+            copyIcons = function (curPlatform) {
+                var srcIcons = settings.icons[curPlatform],
+                    destIcons = iconMap[curPlatform],
+                    msg,
+                    curSrc,
+                    curDest;
+
+                if (!destIcons) {
+                    defer.reject('Invalid platform!');
+                    grunt.fail.warn('Invalid platform supplied');
+                    return;
+                }
+
+                grunt.log.subhead('Copying icons for ' + curPlatform + ' platform ...');
+                //loop through supplied platform icons to copy
+                Object.keys(srcIcons).forEach(function (curKey) {
+                    curSrc = srcIcons[curKey];
+
+                    if (!grunt.file.exists(curSrc)) {
+                        msg = curKey + ' for the ' + curPlatform +
+                              ' platform does not exist ... skipping!';
+
+                        grunt.log.error(msg);
+                        return;
+                    }
+                });
+
+            };
+
+        //if a platform was supplied, run copyIcons on specified platform
+        //otherwise try copying the icons for all supported platforms
+        if (platform) {
+            copyIcons(platform);
+        } else {
+            //confirm the icon paths exist for defined platforms
+            settings.platforms.forEach(function (curPlatform) {
+                copyIcons(curPlatform);
+            });
+        }
+
+        defer.resolve();
+
+        return defer.promise;
+    }
+
     function updatePlistURLTypes(appId, urlScheme, pl) {
         //check for URL Types array
         if (!pl.CFBundleURLTypes) {
@@ -58,7 +131,6 @@ module.exports = function (grunt) {
                 settings.appName + '-Info.plist'
             ),
             plistObj;
-
         if (!grunt.file.exists(plistPath)) {
             grunt.log.error(['Failed to find plist file for phonegap project.'],
                             ['Skipping plist update.'].join(' '));
@@ -77,7 +149,7 @@ module.exports = function (grunt) {
         }
 
         defer.resolve();
-        return q.promise;
+        return defer.promise;
     }
 
     function spawnCmd(cmdOptions) {
@@ -188,7 +260,12 @@ module.exports = function (grunt) {
         spawnCmd(cmdOptions).then(function () {
             //update the created plist file
             updatePlist(s).then(function () {
+                return updateIcons(s, platform);
+            }).then(function () {
                 defer.resolve();
+            }, function (err) {
+                console.log("oh no! " + err);
+                defer.reject(err);
             });
         }, function (err) {
             defer.reject(err);

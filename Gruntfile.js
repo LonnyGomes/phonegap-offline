@@ -45,6 +45,22 @@ module.exports = function (grunt) {
                 templates: {
                     www: 'test/fixtures/www',
                     ios: 'test/fixtures/ios'
+                },
+                icons: {
+                    ios: {
+                        icon29: 'test/fixtures/icons/icon29.png',
+                        icon29x2: 'test/fixtures/icons/icon29x2.png',
+                        icon40: 'test/fixtures/icons/icon40.png',
+                        icon40x2: 'test/fixtures/icons/icon40x2.png',
+                        icon57: 'test/fixtures/icons/icon57.png',
+                        icon57x2: 'test/fixtures/icons/icon57x2.png',
+                        icon60: 'test/fixtures/icons/icon60.png',
+                        icon60x2: 'test/fixtures/icons/icon60x2.png',
+                        icon72: 'test/fixtures/icons/icon72.png',
+                        icon72x2: 'test/fixtures/icons/icon72x2.png',
+                        icon76: 'test/fixtures/icons/icon76.png',
+                        icon76x2: 'test/fixtures/icons/icon76x2.png'
+                    }
                 }
             }
         },
