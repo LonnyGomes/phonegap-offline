@@ -68,9 +68,18 @@ module.exports = function (grunt) {
                     curSrc,
                     curDest;
 
-                if (!destIcons) {
+                if (!destIcons || !srcIcons) {
                     defer.reject('Invalid platform!');
-                    grunt.fail.warn('Invalid platform supplied');
+                    grunt.fail.warn('Invalid platform supplied!');
+                    return;
+                }
+
+                //check if destination base path exists before continuing
+                if (!grunt.file.exists(destPath[curPlatform])) {
+                    grunt.log.error('Icon path for ' + curPlatform +
+                                    ' does not exist. ' + 'The platform must ' +
+                                    'be added!');
+                    defer.resolve();
                     return;
                 }
 
@@ -101,8 +110,13 @@ module.exports = function (grunt) {
                         return;
                     }
                 });
-
             };
+
+        //icons is an optional parameter, lets check if it's even defined
+        if (!settings.icons) {
+            grunt.log.writeln('icons parameter not defined ... not copying icons!');
+            return;
+        }
 
         //if a platform was supplied, run copyIcons on specified platform
         //otherwise try copying the icons for all supported platforms
