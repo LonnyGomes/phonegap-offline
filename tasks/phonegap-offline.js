@@ -100,12 +100,17 @@ module.exports = function (grunt) {
                     curDest = path.resolve(destPath[curPlatform], destIcons[curKey]);
 
                     try {
-                        grunt.log.write('Copying ' + curSrc + ' ... ');
+                        grunt.log.write(grunt.log.wordlist([
+                            'Copying',
+                            curKey,
+                            '..\t'
+                        ], {separator: ' '}));
                         grunt.file.copy(curSrc, curDest);
                         grunt.log.ok();
                     } catch (e) {
-                        grunt.log.writeln('Error encountered while copying ' +
-                                       curKey + ':');
+                        grunt.log.writeln(grunt.log.wordlist([
+                            'FAILED'
+                        ], {color: 'red'}));
                         grunt.log.error(e.message);
                         return;
                     }
