@@ -87,7 +87,19 @@ module.exports = function (grunt) {
                         return;
                     }
 
+                    //derive the destination givin platform and icon map
+                    curDest = path.resolve(destPath[curPlatform], destIcons[curKey]);
 
+                    try {
+                        grunt.log.write('Copying ' + curSrc + ' ... ');
+                        grunt.file.copy(curSrc, curDest);
+                        grunt.log.ok();
+                    } catch (e) {
+                        grunt.log.writeln('Error encountered while copying ' +
+                                       curKey + ':');
+                        grunt.log.error(e.message);
+                        return;
+                    }
                 });
 
             };
