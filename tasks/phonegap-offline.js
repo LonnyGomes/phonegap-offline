@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         requiredTemplates = [ 'www' ],
         description = 'Phonegap wraper for offline configruations';
 
-    function updateIcons(settings, platform) {
+    function phonegapCopyIcons(settings, platform) {
         var defer = q.defer(),
             iconMap =  {
                 ios: {
@@ -115,6 +115,9 @@ module.exports = function (grunt) {
             });
         }
 
+        //we don't want failed attempts at copying icons to stop
+        //the grunt process so we will just auto resolve and report
+        //warnings to stdout
         defer.resolve();
 
         return defer.promise;
@@ -274,7 +277,7 @@ module.exports = function (grunt) {
         spawnCmd(cmdOptions).then(function () {
             //update the created plist file
             updatePlist(s).then(function () {
-                return updateIcons(s, platform);
+                return phonegapCopyIcons(s, platform);
             }).then(function () {
                 defer.resolve();
             }, function (err) {
@@ -340,6 +343,9 @@ module.exports = function (grunt) {
                 },
                 prepare: function (s, platform) {
                     return phonegapPrepare(s, platform);
+                },
+                icons: function (s, platform) {
+                    return phonegapCopyIcons(s, platform);
                 }
             };
 
