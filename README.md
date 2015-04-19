@@ -2,6 +2,12 @@
 
 > Grunt plugin to leverage phonegap in offline environments
 
+## Use Cases
+
+* creating phonegap apps with custom starter templates
+* building a phonegap on a private company LAN
+* continuous intergration builds for phonegap applications
+
 ## Getting Started
 This plugin requires Grunt.
 
