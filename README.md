@@ -253,7 +253,12 @@ grunt phonegap_offline:icons:ios
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+
+#### v0.1.0
+
+* initial release
+* implemented `create`, `platform`, `prepare` and `icons` tasks for ios (Android not supporte yet)
+
 
 ## License
 Copyright (c) 2015 Lonny Gomes. Licensed under the MIT license.
