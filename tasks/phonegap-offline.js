@@ -96,15 +96,23 @@ module.exports = function (grunt) {
                         return;
                     }
 
-                    //derive the destination givin platform and icon map
-                    curDest = path.resolve(destPath[curPlatform], destIcons[curKey]);
-
                     try {
                         grunt.log.write(grunt.log.wordlist([
                             'Copying',
                             curKey,
                             '..\t'
                         ], {separator: ' '}));
+
+                        //check if curKey is a valid key
+                        if (!destIcons[curKey]) {
+                            throw new Error(curKey +
+                                ' is an invalid  parameter' + ' for the ' +
+                                curPlatform + ' platform!');
+                        }
+
+                        //derive the destination given platform and icon map
+                        curDest = path.resolve(destPath[curPlatform], destIcons[curKey]);
+
                         grunt.file.copy(curSrc, curDest);
                         grunt.log.ok();
                     } catch (e) {
