@@ -131,8 +131,11 @@ A list of phonegap platforms supported for the phonegap project. Currently, iOS 
 
 #### settings.templates
 Type: `Object`
+
 Default value: `N/A`
+
 Supported object values: `www | ios`
+
 Required: `yes`
 
 The `templates` property maps platform templates to their file locations rather then pulling down the templates from the internet. It is constructed as an object of template_name/template_path key value pairs. The `www` template is required as well as any other platform defined in `settings.platforms` array.
@@ -253,6 +256,9 @@ grunt phonegap_offline:icons:ios
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+
+#### v0.1.1
+* Added road map and fixed MD formatting errors
 
 #### v0.1.0
 
