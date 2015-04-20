@@ -257,7 +257,13 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 #### v0.1.0
 
 * initial release
-* implemented `create`, `platform`, `prepare` and `icons` tasks for ios (Android not supporte yet)
+* implemented `create`, `platform`, `prepare` and `icons` tasks for iOS
+
+## Road map
+
+* Add build tasks for iOS
+* Android support
+* Convert to multi-task structure
 
 
 ## License
