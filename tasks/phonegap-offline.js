@@ -356,6 +356,51 @@ module.exports = function (grunt) {
         return defer.promise;
     }
 
+    function phonegapAddPlugins(s) {
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
+            cmdOptions = {
+                cmd: s.command,
+                opts: {
+                    cwd: appPath
+                },
+                args: [
+                    'plugin',
+                    'add'
+                ]
+            },
+            p;
+
+        //check if plugins parameter was supplied
+        if (!s.plugins) {
+            grunt.log.writeln('no plugins are defined ... skipping.');
+            defer.resolve();
+            return defer.promise;
+        }
+
+        //make sure app path exists
+        if (!grunt.file.exists(appPath)) {
+            grunt.fail.fatal('Phonegap project does not exist, run create!');
+        }
+
+        //run through each plugin and attempt to add it
+        p = s.plugins.reduce(function (prevP, curVal) {
+            return prevP.then(function () {
+                var customOpts = _.clone(cmdOptions);
+                customOpts.args.push(path.resolve(curVal));
+                return spawnCmd(customOpts);
+            });
+        }, q());
+
+        p.then(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
+        });
+
+        return defer.promise;
+    }
+
     grunt.task.registerTask('phonegap_offline', description, function (action, platform) {
         var done,
             settings,
@@ -373,6 +418,9 @@ module.exports = function (grunt) {
                 },
                 icons: function (s, platform) {
                     return phonegapCopyIcons(s, platform);
+                },
+                plugins: function (s) {
+                    return phonegapAddPlugins(s);
                 }
             };
 

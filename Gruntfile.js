@@ -46,6 +46,9 @@ module.exports = function (grunt) {
                     www: 'test/fixtures/www',
                     ios: 'test/fixtures/ios'
                 },
+                plugins: [
+                    'test/fixtures/plugins/cordova-plugin-console'
+                ],
                 icons: {
                     ios: {
                         icon29: 'test/fixtures/icons/AppIcon29x29.png',
