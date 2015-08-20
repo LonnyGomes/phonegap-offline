@@ -28,9 +28,11 @@ grunt.loadNpmTasks('grunt-phonegap-offline');
 ### Overview
 In your project's Gruntfile, add a section named `phonegap_offline` to the data object passed into `grunt.initConfig()`.
 
-The following configuration would initialize a phongap app targeted for `ios` within the `app` with an app id of `com.fakecompany.appid`, an app name of `appName` and it would respond to a URL scheme of `faceurlscheme://`. 
+The following configuration would initialize a phongap app targeted for `ios` within the `app` with an app id of `com.fakecompany.appid`, an app name of `appName` and it would respond to a URL scheme of `faceurlscheme://`.
 
 The base HTML template for phonegap would be copied from `test/fixtures/www` and it's `ios` template from `test/fixtures/ios`. After adding the `ios` platform, the app icons from the `icons` folder will be copied into the proper phonegap location for the `ios` build.
+
+By running `phonegap_offline:plugins` an offline version of `cordova-plugin-console` would be installed for the `ios` platform.
 
 ```js
 grunt.initConfig({
@@ -47,6 +49,9 @@ grunt.initConfig({
             templates: {
                 www: 'test/fixtures/www',
                 ios: 'test/fixtures/ios'
+            },
+            plugins: {
+                'test/fixtures/plugins/cordova-plugin-console'
             },
             icons: {
                 ios: {
@@ -158,6 +163,17 @@ The default template for `www` is located in `test/fixtures/www` for this reposi
 
 A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
 
+#### settings.templates
+Type: `Array`
+
+Default value: `N/A`
+
+Supported values: `relative base paths to phonegap/cordova plugins`
+
+Required: `no`
+
+The `plugins` setting provides a method to install local copies of phonegap plugins. This setting is run when running `grunt phonegap_offline:plugins` and will attempt to install all listed plugins.
+
 #### settings.icons
 Type: `Object`
 
@@ -212,7 +228,7 @@ grunt phonegap_offline:create
 
 #### add
 
-The `add` task adds a platform for phonegap application. The `create` task must have been run beforehand. To add the `ios` platform to your project, you would run the following command.
+The `add` task adds a platform for phonegap application. The `create` task must have been run beforehand. To add the `ios` platform to your project, you would run the following command:
 
 ```
 grunt phonegap_offline:add:ios
@@ -233,6 +249,14 @@ Running `prepare` without targetting a platform:
 ```
 grunt phonegap_offline:prepare
 ```
+#### plugins
+
+The `plugins` taks runs `phonegap plugin add <plugin_file_location>` where `plugin_file_location` refers to a list of file locations to local copies of phonegap plugins defined in the `plugins` settings option.  To install the defined plugins runt the following command:
+
+```
+grunt phonegap_offline:plugins
+```
+
 
 #### icons
 
