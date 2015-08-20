@@ -64,7 +64,13 @@ module.exports = function (grunt) {
                         icon76: 'test/fixtures/icons/AppIcon76x76.png',
                         icon76x2: 'test/fixtures/icons/AppIcon76x76@2x.png'
                     }
-                }
+                },
+                packaging: {
+                    ios: {
+                        provisioningProfileName: 'iOS Team Provisioning Profile: *'
+                    }
+                },
+                outputPath: 'output'
             }
         },
         bump: {

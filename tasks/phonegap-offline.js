@@ -401,6 +401,122 @@ module.exports = function (grunt) {
         return defer.promise;
     }
 
+    function phonegapPackagingIos(s) {
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
+            projectPath = path.resolve(
+                s.basePath,
+                'platforms',
+                'ios',
+                s.appName + '.xcodeproj'
+            ),
+            archiveOutputFile = path.resolve(
+                s.outputPath,
+                s.appName + '.xcarchive'
+            ),
+            ipaOutputFile = path.resolve(
+                s.outputPath,
+                s.appName + '.ipa'
+            ),
+            ipaArchiveCmdOptions = {
+                cmd: 'xcodebuild',
+                opts: {
+                    cwd: appPath
+                },
+                args: [
+                    '-scheme',
+                    s.appName,
+                    '-project',
+                    projectPath,
+                    'archive',
+                    '-archivePath',
+                    archiveOutputFile
+                ]
+            },
+            ipaPackageCmdOptions = {
+                cmd: 'xcodebuild',
+                opts: {
+                    cwd: appPath
+                },
+                args: [
+                    '-exportArchive',
+                    '-exportFormat',
+                    'ipa',
+                    '-archivePath',
+                    archiveOutputFile,
+                    '-exportPath',
+                    ipaOutputFile,
+                    '-exportProvisioningProfile',
+                    s.packaging.ios.provisioningProfileName
+                ]
+            };
+
+        return spawnCmd(ipaArchiveCmdOptions).then(function (results) {
+            return spawnCmd(ipaPackageCmdOptions);
+        });
+    }
+
+    function phonegapPackage(s, platform) {
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
+            platforms = s.platforms,
+            p = q();
+
+        //check if we should package for a particular platform
+        if (platform) {
+            //confirm that the supplied platform exists
+            if (!s.templates[platform]) {
+                grunt.fail.fatal('No corresponding template exists for ' + platform);
+            }
+
+            platforms = [ platform ];
+        }
+
+        //make sure app path exists
+        if (!grunt.file.exists(appPath)) {
+            grunt.fail.fatal('Phonegap project does not exist, run create!');
+        }
+
+        //confirm packaging settings were defined
+        if (!s.packaging) {
+            grunt.fail.fatal('Packaging settings were not defined!');
+        }
+
+        //confirm an output path is defined in the settings
+        if (!s.outputPath) {
+            grunt.fail.fatal('The outputPath setting must be defined!');
+        }
+
+        platforms.forEach(function (curPlatform) {
+            //confirm that the supplied platform packaging settings exists
+            if (!s.packaging[curPlatform]) {
+                grunt.fail.fatal('Packaging settings were not defined for ' + curPlatform);
+            }
+
+            //currently only ios supported
+            switch (curPlatform) {
+            case 'ios':
+                if (!s.packaging[curPlatform].provisioningProfileName) {
+                    grunt.fail.fatal('provisioningProfileName must be defined ' +
+                                     'for ios packaging settings');
+                } else {
+                    p = p.then(function () {
+                        return phonegapPackagingIos(s);
+                    });
+                }
+                break;
+            }
+        });
+
+        p.then(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
+        });
+
+        return defer.promise;
+    }
+
     grunt.task.registerTask('phonegap_offline', description, function (action, platform) {
         var done,
             settings,
@@ -421,6 +537,9 @@ module.exports = function (grunt) {
                 },
                 plugins: function (s) {
                     return phonegapAddPlugins(s);
+                },
+                "package": function (s, platform) {
+                    return phonegapPackage(s, platform);
                 }
             };
 
