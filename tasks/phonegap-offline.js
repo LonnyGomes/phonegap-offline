@@ -15,6 +15,7 @@ module.exports = function (grunt) {
         path = require('path'),
         q = require('q'),
         plist = require('plist'),
+        fs = require('fs-extra'),
         settingsKey = 'phonegap_offline.settings',
         settingsDefaults = {
             command: 'phonegap',
@@ -449,11 +450,41 @@ module.exports = function (grunt) {
                     '-exportProvisioningProfile',
                     s.packaging.ios.provisioningProfileName
                 ]
-            };
+            },
+            removeIpa = function () {
+                var d = q.defer();
 
-        return spawnCmd(ipaArchiveCmdOptions).then(function (results) {
-            return spawnCmd(ipaPackageCmdOptions);
-        });
+                if (fs.existsSync(ipaOutputFile)) {
+                    fs.remove(ipaOutputFile, function (err) {
+                        if (err) {
+                            d.reject(err);
+                        } else {
+                            d.resolve();
+                        }
+                    });
+                }
+                return d.promise;
+            },
+            runIpaArchive = spawnCmd.bind(null, ipaArchiveCmdOptions),
+            runIpaPackage = spawnCmd.bind(null, ipaPackageCmdOptions);
+
+        return removeIpa()
+            .then(runIpaArchive)
+            .then(runIpaPackage)
+            .then(function () {
+                //when we're done we want to remove the .xcarchive file
+                var d = q.defer();
+
+                fs.remove(archiveOutputFile, function (err) {
+                    if (err) {
+                        d.reject(err);
+                    } else {
+                        d.resolve();
+                    }
+                });
+
+                return d.promise;
+            });
     }
 
     function phonegapPackage(s, platform) {
