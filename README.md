@@ -34,6 +34,8 @@ The base HTML template for phonegap would be copied from `test/fixtures/www` and
 
 By running `phonegap_offline:plugins` an offline version of `cordova-plugin-console` would be installed for the `ios` platform.
 
+The packaging section defines build settings for each platform needed to generate the final files. In this case, the code signing identity and UUID of rht provisioning profile are used to archive the iOS app and the `provisioningProfileName` is used to package the final ipa file which will be saved to the `outputPath`.
+
 ```js
 grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -69,7 +71,15 @@ grunt.initConfig({
                         icon76x2: 'icons/AppIcon76x76@2x.png'
                     }
                 }
-            }
+            },
+            packaging: {
+                ios: {
+                    provisioningProfileName: 'iOS Team Provisioning Profile: *',
+                    codeSignIdentity: 'iPhone Distribution',
+                    provisioningProfileUUID: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+                }
+            },
+            outputPath: 'output'
         }
     }
 });
@@ -213,6 +223,44 @@ The icons definitions are used to copy the icons into the proper location with t
     }
 }
 ```
+
+#### settings.packaging
+Type: `Object`
+
+Default value: `'N/A'`
+
+Supported object values: `ios`
+
+The packaging section defines any build parameters required to package a particular platform. The structure is as follows:
+
+```json
+packaging: {
+    ios: {
+        provisioningProfileName: 'iOS Team Provisioning Profile: *',
+        codeSignIdentity: 'iPhone Distribution',
+        provisioningProfileUUID: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+    }
+}
+```
+#### settings.packaging.ios
+
+The only required setting for iOS packaging is the `provisioningProfileName` parameter. If `codeSignIdentity` or `provisioningProfileUUID` aren't defined, these values are retrieved from the Xcode project settings. The advantage to defining these two fields is that the ipa could be built without having to modify the Code Signing Build Settings within the project.
+
+ iOS parameter              | Description
+-----------------------------| -------------------------------
+ provisioningProfileName    | the name (not filename) of profile (Xcode > Build Settings > Code Signing > Provisioning Profile)
+ codeSignIdentity           | the name (not filename) of distribution cert (Xcode > Build Settings > Code Signing > Code Signing Identity)
+ provisioningProfileUUID    | the UUID of the profile reference in the `provisioningProfileName` parameter (retrieve it by selecting other in Xcode Provisioing Profile settings)
+
+
+#### settings.outputPath
+Type: `String`
+
+Default value: `'N/A'`
+
+Required: `no`
+
+The output path defines the final destination of any package phonegap builds, i.e. the ipa for the product.
 
 ### Tasks
 
