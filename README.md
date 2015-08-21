@@ -296,6 +296,12 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+#### v0.2.0
+
+* added plugins sub task loads plugins stored locally
+* added build sub task as shortcut to `phonegap build`
+* added package sub task that builds an ipa for the project
+
 #### v0.1.1
 * Added road map and fixed MD formatting errors
 
