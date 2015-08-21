@@ -462,16 +462,13 @@ module.exports = function (grunt) {
                             d.resolve();
                         }
                     });
+                } else {
+                    d.resolve();
                 }
+
                 return d.promise;
             },
-            runIpaArchive = spawnCmd.bind(null, ipaArchiveCmdOptions),
-            runIpaPackage = spawnCmd.bind(null, ipaPackageCmdOptions);
-
-        return removeIpa()
-            .then(runIpaArchive)
-            .then(runIpaPackage)
-            .then(function () {
+            removeArchive = function () {
                 //when we're done we want to remove the .xcarchive file
                 var d = q.defer();
 
@@ -484,7 +481,16 @@ module.exports = function (grunt) {
                 });
 
                 return d.promise;
-            });
+            },
+            //bind arguments to spawnCmd to make
+            //the promise chaining more readable
+            runIpaArchive = spawnCmd.bind(null, ipaArchiveCmdOptions),
+            runIpaPackage = spawnCmd.bind(null, ipaPackageCmdOptions);
+
+        return removeIpa()
+            .then(runIpaArchive)
+            .then(runIpaPackage)
+            .then(removeArchive);
     }
 
     function phonegapPackage(s, platform) {
