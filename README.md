@@ -257,6 +257,7 @@ The `plugins` taks runs `phonegap plugin add <plugin_file_location>` where `plug
 grunt phonegap_offline:plugins
 ```
 
+_NOTE:_ the phonegap build subtask is immediately invoked after all plugins are successfully installed
 
 #### icons
 
