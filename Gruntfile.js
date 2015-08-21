@@ -67,7 +67,9 @@ module.exports = function (grunt) {
                 },
                 packaging: {
                     ios: {
-                        provisioningProfileName: 'iOS Team Provisioning Profile: *'
+                        provisioningProfileName: 'iOS Team Provisioning Profile: *',
+                        codeSignIdentity: 'iPhone Distribution',
+                        provisioningProfileUUID: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
                     }
                 },
                 outputPath: 'output'
