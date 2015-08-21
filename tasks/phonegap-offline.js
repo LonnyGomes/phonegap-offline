@@ -357,6 +357,44 @@ module.exports = function (grunt) {
         return defer.promise;
     }
 
+    function phonegapBuild(s, platform) {
+        var defer = q.defer(),
+            appPath = path.resolve(s.basePath),
+            cmdOptions = {
+                cmd: s.command,
+                opts: {
+                    cwd: appPath
+                },
+                args: [
+                    'build'
+                ]
+            },
+            platformPath;
+
+        //build specific platform target if supplied
+        if (platform) {
+            //confirm that the supplied platform exists
+            if (!s.templates[platform]) {
+                grunt.fail.fatal('No corresponding template exists for ' + platform);
+            }
+
+            cmdOptions.args.push(platform);
+        }
+
+        //make sure app path exists
+        if (!grunt.file.exists(appPath)) {
+            grunt.fail.fatal('Phonegap project does not exist, run create!');
+        }
+
+        spawnCmd(cmdOptions).then(function () {
+            defer.resolve();
+        }, function (err) {
+            defer.reject(err);
+        });
+
+        return defer.promise;
+    }
+
     function phonegapAddPlugins(s) {
         var defer = q.defer(),
             appPath = path.resolve(s.basePath),
@@ -549,44 +587,6 @@ module.exports = function (grunt) {
         });
 
         p.then(function () {
-            defer.resolve();
-        }, function (err) {
-            defer.reject(err);
-        });
-
-        return defer.promise;
-    }
-
-    function phonegapBuild(s, platform) {
-        var defer = q.defer(),
-            appPath = path.resolve(s.basePath),
-            cmdOptions = {
-                cmd: s.command,
-                opts: {
-                    cwd: appPath
-                },
-                args: [
-                    'build'
-                ]
-            },
-            platformPath;
-
-        //build specific platform target if supplied
-        if (platform) {
-            //confirm that the supplied platform exists
-            if (!s.templates[platform]) {
-                grunt.fail.fatal('No corresponding template exists for ' + platform);
-            }
-
-            cmdOptions.args.push(platform);
-        }
-
-        //make sure app path exists
-        if (!grunt.file.exists(appPath)) {
-            grunt.fail.fatal('Phonegap project does not exist, run create!');
-        }
-
-        spawnCmd(cmdOptions).then(function () {
             defer.resolve();
         }, function (err) {
             defer.reject(err);
