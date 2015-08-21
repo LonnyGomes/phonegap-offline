@@ -523,10 +523,31 @@ module.exports = function (grunt) {
 
                 return d.promise;
             },
-            //bind arguments to spawnCmd to make
-            //the promise chaining more readable
-            runIpaArchive = spawnCmd.bind(null, ipaArchiveCmdOptions),
-            runIpaPackage = spawnCmd.bind(null, ipaPackageCmdOptions);
+            runIpaArchive,
+            runIpaPackage;
+
+        //check the packaging section for optional code sign setting
+        if (s.packaging.ios.codeSignIdentity) {
+            //add signing identity override as a command line argument
+            ipaArchiveCmdOptions.args.push(
+                'CODE_SIGN_IDENTITY="' +
+                    s.packaging.ios.codeSignIdentity + '"'
+            );
+        }
+
+        //check the packaging section for optional provisioning profile setting
+        if (s.packaging.ios.provisioningProfileUUID) {
+            //add provisioning profile override as a command line argument
+            ipaArchiveCmdOptions.args.push(
+                'PROVISIONING_PROFILE=' +
+                    s.packaging.ios.provisioningProfileUUID
+            );
+        }
+
+        //bind arguments to spawnCmd to make
+        //the promise chaining more readable
+        runIpaArchive = spawnCmd.bind(null, ipaArchiveCmdOptions);
+        runIpaPackage = spawnCmd.bind(null, ipaPackageCmdOptions);
 
         return removeIpa()
             .then(runIpaArchive)
