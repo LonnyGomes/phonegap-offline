@@ -344,6 +344,10 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+#### v0.2.1
+
+* added optional `codeSignIdentity` and `provisioningProfileUUID` packaging parameters which will override the settings within the Xcode project during the code signing process
+
 #### v0.2.0
 
 * added plugins sub task loads plugins stored locally
