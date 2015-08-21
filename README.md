@@ -274,7 +274,21 @@ Copy only icons for the `ios` platform:
 grunt phonegap_offline:icons:ios
 ```
 
+#### build
 
+The `build` task invokes the `phonegap build` command and is used to compile any native code required by plugins.
+
+You can either invoke build for all platforms (currently only iOS is suppored)
+
+```
+grunt phonegap_offline:build
+```
+
+Or specify a particular platform to build
+
+```
+grunt phonegap_offline:build:ios
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
