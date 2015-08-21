@@ -370,10 +370,11 @@ module.exports = function (grunt) {
                     'add'
                 ]
             },
+            buildProject = phonegapBuild.bind(null, s),
             p;
 
         //check if plugins parameter was supplied
-        if (!s.plugins) {
+        if (!s.plugins || s.plugins.length === 0) {
             grunt.log.writeln('no plugins are defined ... skipping.');
             defer.resolve();
             return defer.promise;
@@ -393,11 +394,13 @@ module.exports = function (grunt) {
             });
         }, q());
 
-        p.then(function () {
-            defer.resolve();
-        }, function (err) {
-            defer.reject(err);
-        });
+
+        p.then(buildProject)
+            .then(function () {
+                defer.resolve();
+            }, function (err) {
+                defer.reject(err);
+            });
 
         return defer.promise;
     }
