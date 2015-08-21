@@ -163,7 +163,7 @@ The default template for `www` is located in `test/fixtures/www` for this reposi
 
 A list of phonegap platforms supported for the phonegap project. Currently, iOS is the only supported platform. For a list of all supported phonegap platforms, see [here](http://docs.build.phonegap.com/en_US/introduction_supported_platforms.md.html).
 
-#### settings.templates
+#### settings.plugins
 Type: `Array`
 
 Default value: `N/A`
